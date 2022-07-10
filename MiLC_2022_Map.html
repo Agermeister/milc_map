@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Minor League Cricket 2022</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' type='text/css' media='Screen' />
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' type='text/css' media='Screen' />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' type='text/css' media='handheld' />
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' type='text/css' media='handheld'  />
+    <!--<link href='https://fonts.googleapis.com/css?family=Patua+One&display=swap' rel='stylesheet'>-->
+	<link href='https://fonts.googleapis.com/css2?family=Poppins&display=swap' rel='stylesheet'>
+        <style>
+        body { 
+			margin:0; 
+			padding:0; 
+			background-color: #E51B23;
+			}
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+<style>
+		
+	body {
+		margin:0; padding:0; 
+	}
+	
+    #map {
+        position: absolute;
+        top: 7%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width:100%;
+    }
+    
+    .topbar {
+	position:absolute;
+	font: 110% 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-family: Poppins !important;
+	font-weight: bold;
+	color: #FFFFFF;
+    margin: 0.4% 1% 1% 1%;
+	}
+    
+    #locations {
+        position: absolute;
+    }
+	
+	.legend {
+    background-color: 	#242020;
+    border-radius: 3px;
+    bottom: 30px;
+    box-shadow: 0 1px 2px #f0f0ee;
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	color: #ffffff;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    z-index: 1;
+}
+
+.legend h4 {
+    margin: 0 0 10px;
+}
+
+.legend div span { 			/*defines circle symbols*/
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+}
+
+.mapboxgl-popup-content {
+    max-width: 3500px;
+    font: 12px/18px 'Poppins' !important, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.popup .mapboxgl-popup-content {
+    max-width: 3500px;
+    font: 12px/18px 'Poppins' !important, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.marker {
+  background-image: http://d30y9cdsu7xlg0.cloudfront.net/png/ ('192184-200.png');
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+</style>
+</head>
+
+
+
+<body>
+
+<div id='map'></div>
+
+
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.0.1/mapbox-gl-geocoder.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.0.1/mapbox-gl-geocoder.css' type='text/css' />
+
+
+</div>
+<a href="https://www.minorleaguecricket.com/" target="_blank">
+  <img src="https://themapden.co.uk/wp-content/uploads/2022/07/MilcT-whit-lgo.png" alt="Minor League Cricket" style="float:right;width:48px;height:48px;border:0;">
+</a>
+<div class='topbar'>
+	Minor League Cricket 2022	
+</div>
+
+<script>
+
+//Javascript File
+mapboxgl.accessToken = 'pk.eyJ1IjoiYWdlcm1laXN0ZXIiLCJhIjoiZjJmY2VkNWU1MDc1Y2NjNGM3ZGI2MTk1OTAyMGE3YmYifQ.HTI5TRmAfbZBARLK_0MfLA';
+
+var popup = null
+var popup2 = null
+var map = new mapboxgl.Map({
+ container: 'map',
+ style: 'mapbox://styles/agermeister/cl55qm41f002215sfzjn79hpc',
+ center: [-97.720, 37.110],
+ zoom: 3.5,
+ pitch: 0
+});
+
+
+map.on('style.load', function(){
+ map.addSource('https://www.mapbox.com/studio/datasets/agermeister/cl55ocorq49b220ph2ktir3lv/',{
+ 'type': 'vector',
+ 'url': 'mapbox://agermeister.cl55ocorq49b220ph2ktir3lv-7ha9s',
+ });
+
+
+ });
+ 
+ var colourList = [
+ 
+    ["Eastern Division", '#ffffcc'],
+    ["Southern Division", '#ffeda0'],
+    ["Western Division", '#fed976'],
+	["Central Division", '#800026']
+];	
+	
+    map.on('load', function () {
+         map.addLayer({
+            'id': 'Minor League Teams',
+            'type': 'circle',
+            //Load the vector tile source from Music Map
+            'source': {
+                type: 'vector',
+                url: 'mapbox://agermeister.cl55ocorq49b220ph2ktir3lv-7ha9s' //Your Mapbox tileset Map ID
+            },
+            'source-layer': 'MiLC_2022', //name of tileset
+            'paint' : {
+                //Add data-driven styles for circle-color
+				'circle-color': "#FFFFFF",
+                'circle-radius' : 1,
+                'circle-opacity' : 0
+              }
+        });
+
+map.loadImage(
+'https://themapden.co.uk/wp-content/uploads/2022/07/MilcT-whit-lgo.png',
+(error, image) => {
+if (error) throw error;
+ 
+// Add the image to the map style.
+map.addImage('cat', image);
+ 
+// Add a data source containing one point feature.
+map.addSource('point', {
+'type': 'geojson',
+'data': {
+'type': 'FeatureCollection',
+'features': [
+{
+'type': 'Feature',
+'geometry': {
+'type': 'Point',
+'coordinates': [-88.153566, 41.994666]
+}
+}
+]
+}
+});
+ 
+// Add a layer to use the image to represent the data.
+map.addLayer({
+'id': 'points',
+'type': 'symbol',
+'source': 'point', // reference the data source
+'layout': {
+'icon-image': 'cat', // reference the image
+'icon-size': 0.1
+}
+});
+}
+);
+  });
+
+	
+	// When a click event occurs near a place, open a popup at the location of
+// the feature, with HTML description from its properties
+map.on('click', function(e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['MiLC_2022'] });
+
+    // if the features have no info, return nothing
+    if (!features.length) {
+        return;
+    }
+
+    var feature = features[0];
+
+    // Populate the popup and set its coordinates
+    // based on the feature found
+    var popup = new mapboxgl.Popup()
+        .setLngLat(feature.geometry.coordinates)
+        .setHTML('<div id="popup" class="popup" style="z-index: 10;">' +
+            '<ul class="list-group">' +
+			'<li class="list-group-item"> <b><h3> ' + feature.properties['Team'] + " </li>" + 
+            '</b></h3><li class="list-group-item"><h5> Conference: </h5>' + feature.properties['Conference'] + " </li>" +
+            '<li class="list-group-item"><h5> Division: </h5>' + feature.properties['Division'] + " </li>" +
+            '<li class="list-group-item"><h5> 2021 Minor League Result: </h5>' + feature.properties['2021 MiLC'] + " </li>" +
+            '<li class="list-group-item"><h5> Colors: </h5>' + feature.properties['Colors'] + " </li>" +
+            '<li class="list-group-item"><h5> Home Ground: </h5>' + feature.properties['Ground'] + " </li>" +
+            '<li class="list-group-item"><h5> Address: </h5>' + feature.properties['Address'] + " </li>" +
+			'</ul> </div>')
+        .addTo(map);
+});
+        
+
+// Use the same approach as above to indicate that the symbols are clickable
+// by changing the cursor style to 'pointer'
+
+map.on('mousemove', function(e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['MiLC_2022'] });
+    map.getCanvas().style.cursor = (features.length) ? 'pointer' : ''
+});
+ 
+
+map.addControl(new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+}));
+
+// Add geolocate control to the map.
+map.addControl(new mapboxgl.GeolocateControl({
+    positionOptions: {
+        enableHighAccuracy: true
+    },
+    trackUserLocation: true
+}));
+
+var full = new mapboxgl.FullscreenControl();
+map.addControl(full, 'bottom-right');
+
+// Add zoom and rotation controls to the map.
+var nav = new mapboxgl.NavigationControl();
+map.addControl(nav, 'bottom-right');
+
+</script>
+</body>
+</html>
+
